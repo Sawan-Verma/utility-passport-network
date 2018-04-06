@@ -1,0 +1,67 @@
+/**
+ * SSN (Supplier switching network)
+ */
+
+namespace org.capita
+/**
+ * The type of utilities
+*/
+enum Utility {
+  o GAS
+  o PHONE
+  o BROADBAND
+  o ELECTRICITY
+}
+
+asset UtilityPassport identified by passportUniqueId {
+    o String passportUniqueId
+    --> Address address optional
+}
+asset Address identified by propertyId {
+  	o String propertyId
+    o String passportUniqueId optional
+    o String city
+  	o String country
+  	o String street
+  	o String zip 
+    --> Consumer[] consumer optional // after creating an address we can add consumer to it
+  	--> UtilityDetail[] utilityDetail optional // after creating an address we can add utilities to it
+}
+/**
+ * A concept utility details
+ */
+asset UtilityDetail identified by utilityUniqueId {
+  o String utilityUniqueId // create unique ID
+  o Utility utilityType
+  o String propertyId optional// on which address it is being created
+  o String supplierId optional// what supplier serves this 
+  o String endDate optional
+  o String startDate optional
+  o String supplier optional
+}
+/**
+ * consumer is a participant
+*/
+participant Consumer identified by phoneNumber {
+    o String phoneNumber
+    o String propertyId optional // generated when address is created
+    o String passportUniqueId optional// generated during registration
+    o String firstName
+    o String lastName
+    o String age optional
+}
+/**
+ * supplier is another participant
+*/
+participant Supplier identified by supplierId {
+    o String supplierId
+    o String supplier
+    o Utility utiltyType
+}
+/**
+*to do the switch of supplier
+*/
+transaction SwitchSupplier {
+    --> UtilityDetail UD
+    --> Supplier newSupplier
+}
